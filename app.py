@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from PIL import Image
-
+import io
 
 # ======== Konfigurasi Halaman ========
 st.set_page_config(
