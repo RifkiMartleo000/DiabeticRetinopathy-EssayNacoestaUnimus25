@@ -25,6 +25,6 @@ imageio
 transformers==4.35.0
 huggingface-hub==0.17.3
 protobuf==4.24.4
-cv2
+opencv
 matplotlib.pyplot
 sklearn
