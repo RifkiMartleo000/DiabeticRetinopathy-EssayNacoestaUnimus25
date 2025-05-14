@@ -107,26 +107,21 @@ elif option == "Periksa Retina":
         st.info("Silakan unggah gambar berformat PNG, JPG, atau JPEG.")
 
 # ======== Halaman Hasil Pemeriksaan ========
-elif option == "Periksa Retina":
-    st.markdown("<h1>Periksa Retina</h1>", unsafe_allow_html=True)
-    st.markdown("<p>Unggah Gambar Scan Retina Anda</p>", unsafe_allow_html=True)
+elif option == "Hasil Pemeriksaan":
+    st.markdown("<h1>Hasil Pemeriksaan</h1>", unsafe_allow_html=True)
 
-    uploaded_file = st.file_uploader("Pilih gambar untuk diunggah", type=["png", "jpg", "jpeg"])
-    
-    if uploaded_file:
-        bytes_data = uploaded_file.getvalue()
-        st.session_state["image_bytes"] = bytes_data
-        st.session_state["filename"] = uploaded_file.name
-        image = Image.open(io.BytesIO(bytes_data))
-        st.session_state["image"] = image
-
-        st.success(f"✅ Gambar '{uploaded_file.name}' berhasil diunggah!")
-        st.image(image, caption=f"Gambar yang Anda unggah: {uploaded_file.name}", use_container_width=True)
-    elif st.session_state["image"] is not None:
-        st.info(f"Gambar sebelumnya: {st.session_state['filename']}")
-        st.image(st.session_state["image"], caption=st.session_state["filename"], use_container_width=True)
+    if st.session_state["image"] is None:
+        st.warning("Silakan unggah gambar terlebih dahulu di halaman 'Periksa Retina'.")
     else:
-        st.info("Silakan unggah gambar berformat PNG, JPG, atau JPEG.")
+        st.image(st.session_state["image"], caption=f"Gambar yang akan diproses: {st.session_state['filename']}", use_container_width=True)
+
+        if st.button("🔍 Prediksi"):
+            st.info("Fitur prediksi dinonaktifkan sementara karena TensorFlow tidak tersedia di platform ini.")
+            st.markdown("""
+            <p style='color:red'>
+            Untuk mengaktifkan fitur ini, deploy ulang aplikasi di platform seperti Hugging Face Spaces atau jalankan secara lokal dengan TensorFlow terinstal.
+            </p>
+            """, unsafe_allow_html=True)
 
 # ======== Halaman Tim Kami ========
 elif option == "Tim Kami":
