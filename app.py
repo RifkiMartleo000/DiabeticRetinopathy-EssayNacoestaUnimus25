@@ -153,6 +153,8 @@ elif option == "Hasil Pemeriksaan":
                     print(f"No DR (Confidence: {confidence * 100:.2f}%)")
                 else:
                     print(f"DR (Confidence: {confidence * 100:.2f}%)")
+
+        predict(st.session_state['filename']}", use_container_width=True)
             
 # ======== Halaman Tim Kami ========
 elif option == "Tim Kami":
