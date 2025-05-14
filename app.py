@@ -2,8 +2,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from PIL import Image
-import io
-# import tensorflow as tf  # Nonaktifkan sementara
 
 # ======== Konfigurasi Halaman ========
 st.set_page_config(
