@@ -24,6 +24,7 @@ tflite-runtime
 opencv-python-headless==4.8.0.76
 scikit-learn
 imageio
+io
 
 libblas-dev
 liblapack-dev
