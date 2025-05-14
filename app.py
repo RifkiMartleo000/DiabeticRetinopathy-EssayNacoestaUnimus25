@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import cv2
 import matplotlib.pyplot as plt
 from PIL import Image
 import io
@@ -12,6 +11,7 @@ from tensorflow.keras import layers
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.metrics import categorical_accuracy
 from sklearn.model_selection import train_test_split
+import cv2
 
 # ======== Konfigurasi Halaman ========
 st.set_page_config(
