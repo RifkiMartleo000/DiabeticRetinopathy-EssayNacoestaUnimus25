@@ -154,7 +154,7 @@ elif option == "Hasil Pemeriksaan":
                 else:
                     print(f"DR (Confidence: {confidence * 100:.2f}%)")
 
-        predict(st.session_state['filename']}", use_container_width=True)
+        predict({st.session_state['filename']})
             
 # ======== Halaman Tim Kami ========
 elif option == "Tim Kami":
@@ -167,70 +167,6 @@ elif option == "Tim Kami":
             <li>Anggota 3</li>
         </ul>
     """, unsafe_allow_html=True)
-
-
-import streamlit as st
-import tensorflow as tf
-from transformers import TFAutoModelForSequenceClassification, AutoTokenizer
-
-# Judul aplikasi
-st.title("Analisis Sentimen dengan Hugging Face dan TensorFlow")
-st.write("Aplikasi ini menggunakan model Hugging Face dengan backend TensorFlow")
-
-# Informasi TensorFlow
-st.write(f"TensorFlow version: {tf.__version__}")
-
-# Fungsi untuk memuat model dengan caching
-@st.cache_resource
-def load_model():
-    # Menggunakan model analisis sentimen berbahasa Indonesia yang kecil
-    model_name = "indolem/indobert-base-uncased-sentiment"
-    
-    # Tampilkan status loading
-    with st.spinner(f"Memuat model {model_name}..."):
-        # Muat tokenizer dan model
-        tokenizer = AutoTokenizer.from_pretrained(model_name)
-        model = TFAutoModelForSequenceClassification.from_pretrained(model_name)
-        
-    return tokenizer, model
-
-# UI untuk input pengguna
-st.subheader("Masukkan teks untuk analisis")
-user_input = st.text_area("Teks untuk dianalisis:", "Saya sangat senang belajar NLP dan teknologi AI.")
-
-# Tombol untuk memproses
-if st.button("Analisis Sentimen"):
-    try:
-        # Muat model
-        tokenizer, model = load_model()
-        
-        # Proses input
-        inputs = tokenizer(user_input, return_tensors="tf", padding=True, truncation=True, max_length=128)
-        
-        # Lakukan prediksi
-        outputs = model(inputs)
-        
-        # Dapatkan hasil prediksi
-        scores = tf.nn.softmax(outputs.logits, axis=1).numpy()[0]
-        
-        # Tampilkan hasil
-        st.subheader("Hasil Analisis")
-        
-        # Sentimen labels (sesuaikan dengan model yang digunakan)
-        labels = ["Negatif", "Netral", "Positif"]
-        
-        # Buat progress bar untuk setiap label
-        for i, (label, score) in enumerate(zip(labels, scores)):
-            st.write(f"{label}: {score:.2%}")
-            st.progress(float(score))
-            
-        # Tampilkan sentimen dominan
-        dominant_sentiment = labels[scores.argmax()]
-        st.success(f"Sentimen dominan: {dominant_sentiment}")
-        
-    except Exception as e:
-        st.error(f"Terjadi kesalahan: {e}")
-        st.write("Tips: Jika model terlalu besar, coba gunakan model yang lebih kecil.")
 
 # Tambahkan informasi footer
 st.markdown("---")
