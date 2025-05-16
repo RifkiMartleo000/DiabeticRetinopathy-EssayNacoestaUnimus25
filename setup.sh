@@ -5,6 +5,11 @@ mkdir -p models
 touch models/README.md
 echo "Letakkan file model 64x3-CNN.json dan 64x3-CNN.weights.h5 di sini" > models/README.md
 
+    steps:
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'  # Ganti '3.11' dengan versi Python yang diinginkan
+          
 # Menginstall library yang diperlukan untuk aplikasi Streamlit DRChecker
 py -3.11 -m pip install -q tensorflow
 py -3.11 -m pip install -q matplotlib
