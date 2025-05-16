@@ -8,6 +8,28 @@ import cv2
 from PIL import Image
 import io
 import os
+import gdown
+
+def download_model_if_needed():
+    model_path = 'models'
+    json_path = os.path.join(model_path, '64x3-CNN.json')
+    weights_path = os.path.join(model_path, '64x3-CNN.weights.h5')
+    
+    if not os.path.exists(model_path):
+        os.makedirs(model_path)
+    
+    if not os.path.exists(json_path):
+        # URL sharing Google Drive untuk file JSON
+        url = 'https://drive.google.com/uc?id=YOUR_FILE_ID'
+        gdown.download(url, json_path, quiet=False)
+    
+    if not os.path.exists(weights_path):
+        # URL sharing Google Drive untuk file H5
+        url = 'https://drive.google.com/uc?id=YOUR_FILE_ID'
+        gdown.download(url, weights_path, quiet=False)
+
+# Panggil fungsi ini di awal aplikasi
+download_model_if_needed()
 
 # ======== Konfigurasi Halaman ========
 st.set_page_config(
