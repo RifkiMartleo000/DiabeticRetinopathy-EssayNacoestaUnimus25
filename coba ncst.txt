@@ -4,7 +4,7 @@ layers
 pandas
 random
 shutil
-matplotlib
+matplotlib==3.7.1
 imread
 ImageDataGenerator
 categorical\_accuracy
