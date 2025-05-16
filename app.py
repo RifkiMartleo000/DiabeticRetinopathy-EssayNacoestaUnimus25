@@ -13,19 +13,19 @@ import gdown
 def download_model_if_needed():
     model_path = 'models'
     json_path = os.path.join(model_path, '64x3-CNN.json')
-    weights_path = os.path.join(model_path, '64x3-CNN.weights.h5')
+    weights_path = os.path.join(model_path, '64x3-CNN.h5')
     
     if not os.path.exists(model_path):
         os.makedirs(model_path)
     
     if not os.path.exists(json_path):
         # URL sharing Google Drive untuk file JSON
-        url = 'https://drive.google.com/uc?id=YOUR_FILE_ID'
+        url = 'https://drive.google.com/file/d/1v5ScZXsZhtmeBcPytRt9jPVjV-EbcBSY/view?usp=drive_link'
         gdown.download(url, json_path, quiet=False)
     
     if not os.path.exists(weights_path):
         # URL sharing Google Drive untuk file H5
-        url = 'https://drive.google.com/uc?id=YOUR_FILE_ID'
+        url = 'https://drive.google.com/file/d/1S4EKYxQgR7CWeZpDa0Eg3KuFWaFt3Kt6/view?usp=drive_link'
         gdown.download(url, weights_path, quiet=False)
 
 # Panggil fungsi ini di awal aplikasi
