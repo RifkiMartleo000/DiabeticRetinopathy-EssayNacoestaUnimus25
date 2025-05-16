@@ -23,7 +23,7 @@ streamlit==1.25.0
 pandas==2.0.3
 numpy==1.24.3
 pillow==9.5.0
-gdown==4.7.1" > requirements.txt
+gdown==4.7.1" > coba ncst.txt
 
 # Membuat file app.py jika belum ada
 if [ ! -f app.py ]; then
