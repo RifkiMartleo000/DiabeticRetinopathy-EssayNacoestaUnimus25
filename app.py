@@ -1,17 +1,13 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from tensorflow import lite
 import tensorflow as tf
-from tensorflow import keras
-from tensorflow.keras import layers
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.metrics import categorical_accuracy
-from sklearn.model_selection import train_test_split
+from tensorflow.keras.models import model_from_json
 import matplotlib.pyplot as plt
+import cv2
 from PIL import Image
 import io
-import cv2
+import os
 
 # ======== Konfigurasi Halaman ========
 st.set_page_config(
@@ -21,9 +17,9 @@ st.set_page_config(
 )
 
 # Inisialisasi session state
-for key in ["image", "image_bytes", "filename", "name"]:
+for key in ["image", "image_bytes", "filename", "name", "prediction_result", "confidence"]:
     if key not in st.session_state:
-        st.session_state[key] = None if "name" not in key else ""
+        st.session_state[key] = None if key not in ["name", "prediction_result", "confidence"] else ""
 
 # ======== Kustomisasi Tema ========
 st.sidebar.header("🎨 Kustomisasi Tampilan")
@@ -79,6 +75,41 @@ option = st.sidebar.selectbox(
     ["Beranda", "Periksa Retina", "Hasil Pemeriksaan", "Tim Kami"]
 )
 
+# ======== Fungsi Prediksi ========
+def predict_image(image_bytes):
+    try:
+        # Baca gambar dari bytes
+        image = Image.open(io.BytesIO(image_bytes))
+        # Konversi ke array numpy dan resize
+        img_array = np.array(image.convert('RGB').resize((224, 224)))
+        
+        # Normalisasi gambar
+        img_array = img_array / 255.0
+        
+        # Periksa apakah model ada
+        model_path = 'models'
+        json_path = os.path.join(model_path, '64x3-CNN.json')
+        weights_path = os.path.join(model_path, '64x3-CNN.weights.h5')
+        
+        if not os.path.exists(json_path) or not os.path.exists(weights_path):
+            return "Error: Model files not found", 0
+        
+        # Load model
+        with open(json_path, 'r') as json_file:
+            json_model = json_file.read()
+        model = model_from_json(json_model)
+        model.load_weights(weights_path)
+        
+        # Prediksi
+        prediction = model.predict(np.array([img_array]))
+        predicted_class = np.argmax(prediction, axis=1)[0]
+        confidence = prediction[0][predicted_class]
+        
+        result = "No DR (Normal)" if predicted_class == 0 else "DR (Diabetic Retinopathy)"
+        return result, confidence * 100
+    except Exception as e:
+        return f"Error: {str(e)}", 0
+
 # ======== Halaman Beranda ========
 if option == "Beranda":
     st.markdown("<h1>Beranda</h1>", unsafe_allow_html=True)
@@ -124,37 +155,22 @@ elif option == "Hasil Pemeriksaan":
         st.image(st.session_state["image"], caption=f"Gambar yang akan diproses: {st.session_state['filename']}", use_container_width=True)
 
         if st.button("🔍 Prediksi"):
-            def predict_class(path):
-                img = cv2.imread(path)
-                RGBImg = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-                RGBImg = cv2.resize(RGBImg, (224, 224))
-
-                # Load arsitektur model
-                with open('64x3-CNN.json', 'r') as json_file:
-                    json_model = json_file.read()
-                new_model = tf.keras.models.model_from_json(json_model)
-
-                # Load bobot ke model yang sama
-                new_model.load_weights("64x3-CNN.weights.h5")
-
-                # Tampilkan gambar
-                plt.imshow(RGBImg)
-                plt.axis('off')
-                plt.show()
-
-                # Normalisasi dan prediksi
-                image = np.array(RGBImg) / 255.0
-                predict = new_model.predict(np.array([image]))
-                predicted_class = np.argmax(predict, axis=1)[0]
-                confidence = predict[0][predicted_class]
-
-                # Tampilkan hasil prediksi
-                if predicted_class == 1:
-                    print(f"No DR (Confidence: {confidence * 100:.2f}%)")
+            with st.spinner("Sedang memproses gambar..."):
+                result, confidence = predict_image(st.session_state["image_bytes"])
+                st.session_state["prediction_result"] = result
+                st.session_state["confidence"] = confidence
+            
+            if "Error" in result:
+                st.error(result)
+            else:
+                st.success(f"Hasil Prediksi: {result}")
+                st.info(f"Tingkat Kepercayaan: {confidence:.2f}%")
+                
+                # Informasi tambahan berdasarkan hasil
+                if "DR" in result:
+                    st.warning("⚠️ Terdeteksi indikasi Diabetic Retinopathy. Sebaiknya konsultasi dengan dokter.")
                 else:
-                    print(f"DR (Confidence: {confidence * 100:.2f}%)")
-
-        predict({st.session_state['filename']})
+                    st.success("✅ Tidak terdeteksi indikasi Diabetic Retinopathy.")
             
 # ======== Halaman Tim Kami ========
 elif option == "Tim Kami":
@@ -170,7 +186,7 @@ elif option == "Tim Kami":
 
 # Tambahkan informasi footer
 st.markdown("---")
-st.markdown("Dibuat dengan Streamlit, Hugging Face, dan TensorFlow")
+st.markdown("Dibuat dengan Streamlit dan TensorFlow")
 
 # ======== Footer ========
 st.markdown(f"<hr style='border-top: 1px solid {text_color};'>", unsafe_allow_html=True)
