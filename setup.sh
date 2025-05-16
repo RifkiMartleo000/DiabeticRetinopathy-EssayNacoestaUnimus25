@@ -1,85 +1,78 @@
 #!/bin/bash
 
-# Script untuk troubleshooting aplikasi DRChecker
-# Gunakan script ini jika mengalami masalah dengan aplikasi
-
-echo "========== DRChecker Troubleshooter =========="
-echo "Menjalankan diagnosa sistem..."
-
-# Cek versi Python
-echo -e "\n=== Versi Python ==="
-python --version
-python -c "import sys; print(f'Python path: {sys.executable}')"
-
-# Cek instalasi dan versi library
-echo -e "\n=== Versi Library ==="
-python -c "
-import sys
-libraries = ['tensorflow', 'matplotlib', 'cv2', 'streamlit', 'pandas', 'numpy', 'PIL', 'gdown']
-status = 0
-
-for lib in libraries:
-    try:
-        module = __import__(lib)
-        if lib == 'PIL':
-            print(f'✅ {lib}: {module.__version__}')
-        else:
-            print(f'✅ {lib}: {module.__version__}')
-    except ImportError:
-        print(f'❌ {lib}: Tidak terinstall')
-        status = 1
-    except AttributeError:
-        if lib == 'cv2':
-            # OpenCV doesn't expose __version__ in the same way
-            print(f'✅ {lib}: {module.__version__}')
-        else:
-            print(f'✅ {lib}: Terinstall (versi tidak tersedia)')
-
-sys.exit(status)
-"
-
-# Periksa status exit dari perintah Python sebelumnya
-if [ $? -ne 0 ]; then
-    echo -e "\n❌ Beberapa library tidak terinstall. Menjalankan setup ulang..."
-    ./setup.sh
+# Memastikan penggunaan Python 3.11
+if command -v python3.11 &>/dev/null; then
+    PYTHON_CMD=python3.11
+    echo "✅ Menggunakan Python 3.11"
+elif command -v python3 &>/dev/null; then
+    PYTHON_CMD=python3
+    PYTHON_VERSION=$(python3 --version)
+    echo "⚠️ Python 3.11 tidak ditemukan. Menggunakan $PYTHON_VERSION"
+    echo "⚠️ Beberapa library mungkin tidak kompatibel jika bukan Python 3.11"
+    echo "⚠️ Untuk menginstall Python 3.11, kunjungi: https://www.python.org/downloads/"
 else
-    echo -e "\n✅ Semua library terinstall dengan baik."
+    echo "❌ Python 3 tidak ditemukan. Silakan install Python 3.11 terlebih dahulu"
+    echo "Untuk menginstall Python 3.11, kunjungi: https://www.python.org/downloads/"
+    exit 1
 fi
 
-# Cek koneksi internet
-echo -e "\n=== Koneksi Internet ==="
-if ping -c 1 google.com &> /dev/null; then
-    echo "✅ Koneksi internet berfungsi"
-else
-    echo "❌ Tidak ada koneksi internet. Koneksi diperlukan untuk mengunduh model dari Google Drive."
+# Membuat virtual environment dengan Python 3.11 (opsional)
+echo "Membuat virtual environment..."
+$PYTHON_CMD -m venv venv
+source venv/bin/activate || source venv/Scripts/activate
+
+# Memastikan pip sudah versi terbaru
+echo "Memperbarui pip ke versi terbaru..."
+python -m pip install --upgrade pip
+
+# Membuat folder untuk menyimpan model
+mkdir -p models
+touch models/README.md
+echo "Letakkan file model 64x3-CNN.json dan 64x3-CNN.weights.h5 di sini" > models/README.md
+
+# Menginstall library yang diperlukan untuk aplikasi Streamlit DRChecker
+echo "Menginstall dependencies..."
+pip install -q tensorflow
+pip install -q matplotlib
+pip install -q opencv-python-headless
+pip install -q streamlit
+pip install -q pandas
+pip install -q numpy
+pip install -q pillow
+pip install -q gdown
+
+# Membuat file requirements.txt untuk GitHub dan Streamlit Cloud dengan versi yang kompatibel dengan Python 3.11
+echo "# Requirements untuk Python 3.11
+tensorflow==2.13.0
+matplotlib==3.7.2
+opencv-python-headless==4.8.0.76
+streamlit==1.25.0
+pandas==2.0.3
+numpy==1.24.3
+pillow==9.5.0
+gdown==4.7.1
+protobuf==4.23.4" > requirements.txt
+
+# Membuat file runtime.txt untuk Streamlit Cloud
+echo "python-3.11.6" > runtime.txt
+
+# Membuat file app.py jika belum ada
+if [ ! -f app.py ]; then
+  echo "Membuat file app.py untuk aplikasi DRChecker"
+  cp paste.txt app.py 2>/dev/null || echo "File paste.txt tidak ditemukan, silakan buat file app.py secara manual"
 fi
 
-# Cek keberadaan file model
-echo -e "\n=== File Model ==="
-model_json="models/64x3-CNN.json"
-model_weights="models/64x3-CNN.h5"
+echo "Setup selesai! File requirements.txt dan runtime.txt telah dibuat untuk deployment di GitHub dan Streamlit Cloud."
+echo "URL Google Drive di app.py perlu diperbarui dengan URL yang valid."
 
-if [ -f "$model_json" ]; then
-    echo "✅ File model JSON ditemukan: $model_json"
-else
-    echo "❌ File model JSON tidak ditemukan: $model_json"
-fi
-
-if [ -f "$model_weights" ]; then
-    echo "✅ File model weights ditemukan: $model_weights"
-else
-    echo "❌ File model weights tidak ditemukan: $model_weights"
-fi
-
-echo -e "\n=== Petunjuk Tambahan ==="
-echo "1. Jika ada masalah dengan library, coba aktivasi virtual environment:"
+# Menampilkan instruksi penggunaan
+echo ""
+echo "=== INSTRUKSI PENGGUNAAN ==="
+echo "1. Aktifkan virtual environment setiap kali menjalankan aplikasi:"
 echo "   source venv/bin/activate    # Linux/Mac"
 echo "   venv\\Scripts\\activate      # Windows"
 echo ""
-echo "2. Jika file model tidak ditemukan, periksa URL Google Drive di app.py"
-echo "   dan pastikan file diatur sebagai dapat diakses publik."
-echo ""
-echo "3. Untuk menjalankan aplikasi:"
+echo "2. Jalankan aplikasi dengan perintah:"
 echo "   streamlit run app.py"
 echo ""
-echo "4. Jika masalah berlanjut, edit file requirements.txt dan coba versi library yang berbeda."
+echo "3. Untuk deployment ke Streamlit Cloud, pastikan file runtime.txt dan requirements.txt sudah di-push ke GitHub"
