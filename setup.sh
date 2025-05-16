@@ -6,14 +6,14 @@ touch models/README.md
 echo "Letakkan file model 64x3-CNN.json dan 64x3-CNN.weights.h5 di sini" > models/README.md
 
 # Menginstall library yang diperlukan untuk aplikasi Streamlit DRChecker
-pip install -q tensorflow
-pip install -q matplotlib
-pip install -q opencv-python-headless
-pip install -q streamlit
-pip install -q pandas
-pip install -q numpy
-pip install -q pillow
-pip install -q gdown
+py -3.11 -m pip install -q tensorflow
+py -3.11 -m pip install -q matplotlib
+py -3.11 -m pip install -q opencv-python-headless
+py -3.11 -m pip install -q streamlit
+py -3.11 -m pip install -q pandas
+py -3.11 -m pip install -q numpy
+py -3.11 -m pip install -q pillow
+py -3.11 -m pip install -q gdown
 
 # Membuat file requirements.txt untuk GitHub dan Streamlit Cloud
 echo "tensorflow==2.13.0
