@@ -8,28 +8,7 @@ import cv2
 from PIL import Image
 import io
 import os
-import gdown
 
-def download_model_if_needed():
-    model_path = 'models'
-    json_path = os.path.join(model_path, '64x3-CNN.json')
-    weights_path = os.path.join(model_path, '64x3-CNN.h5')
-    
-    if not os.path.exists(model_path):
-        os.makedirs(model_path)
-    
-    if not os.path.exists(json_path):
-        # URL sharing Google Drive untuk file JSON
-        url = 'https://drive.google.com/file/d/1v5ScZXsZhtmeBcPytRt9jPVjV-EbcBSY/view?usp=drive_link'
-        gdown.download(url, json_path, quiet=False)
-    
-    if not os.path.exists(weights_path):
-        # URL sharing Google Drive untuk file H5
-        url = 'https://drive.google.com/file/d/1S4EKYxQgR7CWeZpDa0Eg3KuFWaFt3Kt6/view?usp=drive_link'
-        gdown.download(url, weights_path, quiet=False)
-
-# Panggil fungsi ini di awal aplikasi
-download_model_if_needed()
 
 # ======== Konfigurasi Halaman ========
 st.set_page_config(
@@ -98,39 +77,36 @@ option = st.sidebar.selectbox(
 )
 
 # ======== Fungsi Prediksi ========
-def predict_image(image_bytes):
-    try:
-        # Baca gambar dari bytes
-        image = Image.open(io.BytesIO(image_bytes))
-        # Konversi ke array numpy dan resize
-        img_array = np.array(image.convert('RGB').resize((224, 224)))
-        
-        # Normalisasi gambar
-        img_array = img_array / 255.0
-        
-        # Periksa apakah model ada
-        model_path = 'models'
-        json_path = os.path.join(model_path, '64x3-CNN.json')
-        weights_path = os.path.join(model_path, '64x3-CNN.weights.h5')
-        
-        if not os.path.exists(json_path) or not os.path.exists(weights_path):
-            return "Error: Model files not found", 0
-        
-        # Load model
-        with open(json_path, 'r') as json_file:
-            json_model = json_file.read()
-        model = model_from_json(json_model)
-        model.load_weights(weights_path)
-        
-        # Prediksi
-        prediction = model.predict(np.array([img_array]))
-        predicted_class = np.argmax(prediction, axis=1)[0]
-        confidence = prediction[0][predicted_class]
-        
-        result = "No DR (Normal)" if predicted_class == 0 else "DR (Diabetic Retinopathy)"
-        return result, confidence * 100
-    except Exception as e:
-        return f"Error: {str(e)}", 0
+def predict_class(path):
+    img = cv2.imread(path)
+    RGBImg = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    RGBImg = cv2.resize(RGBImg, (224, 224))
+
+    # Load arsitektur model
+    with open('64x3-CNN.json', 'r') as json_file:
+        json_model = json_file.read()
+    new_model = tf.keras.models.model_from_json(json_model)
+
+    # Load bobot ke model yang sama
+    new_model.load_weights("64x3-CNN.h5")
+
+    # Tampilkan gambar
+    plt.imshow(RGBImg)
+    plt.axis('off')
+    plt.show()
+
+    # Normalisasi dan prediksi
+    image = np.array(RGBImg) / 255.0
+    predict = new_model.predict(np.array([image]))
+    predicted_class = np.argmax(predict, axis=1)[0]
+    confidence = predict[0][predicted_class]
+
+    # Tampilkan hasil prediksi
+    if predicted_class == 1:
+        print(f"No DR (Confidence: {confidence * 100:.2f}%)")
+    else:
+        print(f"DR (Confidence: {confidence * 100:.2f}%)")
+
 
 # ======== Halaman Beranda ========
 if option == "Beranda":
@@ -178,10 +154,8 @@ elif option == "Hasil Pemeriksaan":
 
         if st.button("🔍 Prediksi"):
             with st.spinner("Sedang memproses gambar..."):
-                result, confidence = predict_image(st.session_state["image_bytes"])
-                st.session_state["prediction_result"] = result
-                st.session_state["confidence"] = confidence
-            
+                predict_class(st.session_state["image"])
+                
             if "Error" in result:
                 st.error(result)
             else:
