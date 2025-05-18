@@ -2,7 +2,7 @@ streamlit
 pandas
 numpy
 matplotlib
-opencv-python-headless
+opencv-python
 pillow
 gdown
 protobuf
