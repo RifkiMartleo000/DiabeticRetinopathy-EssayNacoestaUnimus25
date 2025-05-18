@@ -224,7 +224,7 @@ elif option == "Hasil Pemeriksaan":
                     path = st.session_state["image"]
                     
                     # Informasi tambahan berdasarkan hasil
-                    if "DR" in result:
+                    if predicted_class == 1:
                         st.warning("⚠️ Terdeteksi indikasi Diabetic Retinopathy. Sebaiknya konsultasi dengan dokter.")
                     else:
                         st.success("✅ Tidak terdeteksi indikasi Diabetic Retinopathy.")
