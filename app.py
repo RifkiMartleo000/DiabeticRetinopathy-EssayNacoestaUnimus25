@@ -124,7 +124,7 @@ def predict_class(path):
 
 # ======== Halaman Beranda ========
 if option == "Beranda":
-    st.markdown("<h1>Beranda</h1>", unsafe_allow_html=False)
+    st.markdown(<h1> Beranda </h1>, unsafe_allow_html=False)
     st.markdown("<p>Selamat datang di situs Pemeriksaan Diabetic Retinopathy</p>", unsafe_allow_html=True)
 
     name = st.text_input("Masukkan nama Anda", value=st.session_state["name"])
