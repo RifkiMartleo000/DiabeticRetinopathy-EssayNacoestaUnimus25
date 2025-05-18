@@ -222,6 +222,7 @@ elif option == "Hasil Pemeriksaan":
             with st.spinner("Sedang memproses gambar..."):
                 try:
                     path = st.session_state["image"]
+                    predict_class(path)
                     
                     # Informasi tambahan berdasarkan hasil
                     if predicted_class == 1:
