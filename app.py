@@ -143,23 +143,49 @@ option = st.sidebar.selectbox(
 )
 
 # ======== Fungsi Prediksi ========
-def predict_class(path):
-    img = cv2.imread(path)
-    RGBImg = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+def predict_class(image_data):
+    """
+    Fungsi untuk memprediksi kelas gambar dari data gambar yang sudah dibuka
+    
+    Args:
+        image_data: PIL Image object yang sudah dibuka
+    
+    Returns:
+        tuple (hasil prediksi, persentase keyakinan)
+    """
+    # Konversi PIL Image ke array numpy
+    np_image = np.array(image_data)
+    
+    # Konversi ke RGB jika gambar berwarna
+    if len(np_image.shape) == 3 and np_image.shape[2] == 3:
+        RGBImg = np_image  # Sudah RGB
+    elif len(np_image.shape) == 3 and np_image.shape[2] == 4:
+        # Gambar dengan Alpha channel
+        RGBImg = np_image[:, :, :3]
+    else:
+        # Gambar grayscale - konversi ke 3 channel
+        RGBImg = cv2.cvtColor(np_image, cv2.COLOR_GRAY2RGB)
+    
+    # Resize gambar
     RGBImg = cv2.resize(RGBImg, (224, 224))
 
     # Load arsitektur model
-    with open('64x3-CNN.json', 'r') as json_file:
-        json_model = json_file.read()
-    new_model = tf.keras.models.model_from_json(json_model)
+    try:
+        with open('64x3-CNN.json', 'r') as json_file:
+            json_model = json_file.read()
+        new_model = tf.keras.models.model_from_json(json_model)
 
-    # Load bobot ke model yang sama
-    new_model.load_weights("64x3-CNN.weights.h5")
+        # Load bobot ke model yang sama
+        new_model.load_weights("64x3-CNN.weights.h5")
+    except Exception as e:
+        st.error(f"Error saat memuat model: {str(e)}")
+        return "Error", 0
 
-    # Tampilkan gambar
+    # Tampilkan gambar yang akan diprediksi
+    plt.figure(figsize=(3, 3))
     plt.imshow(RGBImg)
     plt.axis('off')
-    plt.show()
+    st.pyplot(plt)
 
     # Normalisasi dan prediksi
     image = np.array(RGBImg) / 255.0
@@ -170,10 +196,8 @@ def predict_class(path):
     # Tampilkan hasil prediksi
     if predicted_class == 1:
         return "No DR", confidence * 100
-        st.warning("⚠️ Terdeteksi indikasi Diabetic Retinopathy. Sebaiknya konsultasi dengan dokter.")
     else:
         return "DR", confidence * 100
-        st.success("✅ Tidak terdeteksi indikasi Diabetic Retinopathy.")
 
 
 # ======== Halaman Beranda ========
@@ -200,11 +224,17 @@ elif option == "Periksa Retina":
         bytes_data = uploaded_file.getvalue()
         st.session_state["image_bytes"] = bytes_data
         st.session_state["filename"] = uploaded_file.name
-        image = Image.open(io.BytesIO(bytes_data))
-        st.session_state["image"] = image
+        
+        try:
+            image = Image.open(io.BytesIO(bytes_data))
+            st.session_state["image"] = image
 
-        st.success(f"✅ Gambar '{uploaded_file.name}' berhasil diunggah!")
-        st.image(image, caption=f"Gambar yang Anda unggah: {uploaded_file.name}", use_container_width=True)
+            st.success(f"✅ Gambar '{uploaded_file.name}' berhasil diunggah!")
+            st.image(image, caption=f"Gambar yang Anda unggah: {uploaded_file.name}", use_container_width=True)
+        except Exception as e:
+            st.error(f"Error saat membuka gambar: {str(e)}")
+            st.session_state["image"] = None
+            
     elif st.session_state["image"] is not None:
         st.info(f"Gambar sebelumnya: {st.session_state['filename']}")
         st.image(st.session_state["image"], caption=st.session_state["filename"], use_container_width=True)
@@ -223,11 +253,34 @@ elif option == "Hasil Pemeriksaan":
         if st.button("🔍 Prediksi"):
             with st.spinner("Sedang memproses gambar..."):
                 try:
-                    path = "image"
-                    predict_class(path)
+                    # Langsung gunakan gambar dari session state
+                    result, confidence = predict_class(st.session_state["image"])
+                    
+                    # Simpan hasil prediksi ke session state
+                    st.session_state["prediction_result"] = result
+                    st.session_state["confidence"] = confidence
+                    
+                    # Tampilkan hasil
+                    st.markdown(f"<h2 style='font-size:{h2_size}px;'>Hasil Deteksi</h2>", unsafe_allow_html=True)
+                    
+                    if result == "DR":
+                        st.warning(f"⚠️ Terdeteksi indikasi Diabetic Retinopathy dengan tingkat kepercayaan {confidence:.2f}%")
+                        st.markdown("""
+                        ### Rekomendasi:
+                        - Segera konsultasikan dengan dokter mata
+                        - Kontrol gula darah secara rutin
+                        - Jaga pola makan sehat
+                        """)
+                    else:
+                        st.success(f"✅ Tidak terdeteksi indikasi Diabetic Retinopathy dengan tingkat kepercayaan {confidence:.2f}%")
+                        st.markdown("""
+                        ### Rekomendasi:
+                        - Tetap lakukan pemeriksaan mata rutin setahun sekali
+                        - Jaga pola hidup sehat
+                        """)
                     
                 except Exception as e:
-                    st.error(f"Error: {str(e)}")
+                    st.error(f"Error saat melakukan prediksi: {str(e)}")
             
 # ======== Halaman Tim Kami ========
 elif option == "Tim Kami":
