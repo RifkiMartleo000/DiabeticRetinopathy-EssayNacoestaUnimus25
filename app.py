@@ -223,13 +223,8 @@ elif option == "Hasil Pemeriksaan":
         if st.button("🔍 Prediksi"):
             with st.spinner("Sedang memproses gambar..."):
                 try:
-                    with open("temp_image.jpg", "wb") as f:
-                        f.write(st.session_state["image_bytes"])
-                    
-                    result, conf = predict_class("temp_image.jpg")
-
-                    st.session_state["prediction_result"] = result
-                    st.session_state["confidence"] = f"{conf:.2f}%"  
+                    path = "image"
+                    predict_class(path)
                     
                 except Exception as e:
                     st.error(f"Error: {str(e)}")
