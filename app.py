@@ -170,8 +170,10 @@ def predict_class(path):
     # Tampilkan hasil prediksi
     if predicted_class == 1:
         return "No DR", confidence * 100
+        st.warning("⚠️ Terdeteksi indikasi Diabetic Retinopathy. Sebaiknya konsultasi dengan dokter.")
     else:
         return "DR", confidence * 100
+        st.success("✅ Tidak terdeteksi indikasi Diabetic Retinopathy.")
 
 
 # ======== Halaman Beranda ========
@@ -224,11 +226,6 @@ elif option == "Hasil Pemeriksaan":
                     path = "temp_image.jpg"
                     predict_class(path)
                     
-                    # Informasi tambahan berdasarkan hasil
-                    if predicted_class == 1:
-                        st.warning("⚠️ Terdeteksi indikasi Diabetic Retinopathy. Sebaiknya konsultasi dengan dokter.")
-                    else:
-                        st.success("✅ Tidak terdeteksi indikasi Diabetic Retinopathy.")
                 except Exception as e:
                     st.error(f"Error: {str(e)}")
             
