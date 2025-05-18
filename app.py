@@ -154,7 +154,7 @@ def predict_class(path):
     new_model = tf.keras.models.model_from_json(json_model)
 
     # Load bobot ke model yang sama
-    new_model.load_weights("64x3-CNN.h5")
+    new_model.load_weights("64x3-CNN.weights.h5")
 
     # Tampilkan gambar
     plt.imshow(RGBImg)
