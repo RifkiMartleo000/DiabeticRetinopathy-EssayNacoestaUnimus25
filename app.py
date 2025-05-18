@@ -1,6 +1,10 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import tensorflow as tf
+from tensorflow.keras.models import model_from_json
+import matplotlib.pyplot as plt
+import cv2
 from PIL import Image
 import io
 import os
@@ -120,10 +124,10 @@ if option == "Beranda":
     name = st.text_input("Masukkan nama Anda", value=st.session_state["name"])
     if name:
         st.session_state["name"] = name
-        st.markdown(f"<p style='color:{text_color}; font-size:{font_size}px;'>Halo, {name}!</p>")
+        st.markdown(f"<p style='color:{text_color}; font-size:{font_size}px;'> Halo, {name}! </p>")
 
     if st.button("Selesai"):
-        st.markdown(f"<p style='color:{text_color}; font-size:{font_size}px;'> Silahkan masuk ke menu Periksa Retina pada bagian 'Pilih Halaman'</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color:{text_color}; font-size:{font_size}px;'> Silahkan masuk ke menu Periksa Retina pada bagian 'Pilih Halaman' </p>")
 
 # ======== Halaman Periksa Retina ========
 elif option == "Periksa Retina":
@@ -186,7 +190,6 @@ elif option == "Tim Kami":
 
 # Tambahkan informasi footer
 st.markdown("---")
-st.markdown("Dibuat dengan Streamlit dan TensorFlow")
 
 # ======== Footer ========
 st.markdown(f"<hr style='border-top: 1px solid {text_color};'>", unsafe_allow_html=True)
