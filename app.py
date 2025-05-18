@@ -16,7 +16,6 @@ import io
 import os
 
 
-
 # ======== Konfigurasi Halaman ========
 st.set_page_config(
     page_title="DRChecker",
@@ -125,8 +124,8 @@ def predict_class(path):
 
 # ======== Halaman Beranda ========
 if option == "Beranda":
-    st.markdown("<h1>Beranda</h1>")
-    st.markdown("<p>Selamat datang di situs Pemeriksaan Diabetic Retinopathy</p>")
+    st.markdown("<h1>Beranda</h1>", unsafe_allow_html=False)
+    st.markdown("<p>Selamat datang di situs Pemeriksaan Diabetic Retinopathy</p>", unsafe_allow_html=True)
 
     name = st.text_input("Masukkan nama Anda", value=st.session_state["name"])
     if name:
@@ -138,7 +137,7 @@ if option == "Beranda":
 
 # ======== Halaman Periksa Retina ========
 elif option == "Periksa Retina":
-    st.markdown("<h1> Periksa Retina </h1>")
+    st.markdown("<h1> Periksa Retina </h1>". unsafe_allow_html=True)
     st.markdown("<p>Unggah Gambar Scan Retina Anda</p>", unsafe_allow_html=True)
 
     uploaded_file = st.file_uploader("Pilih gambar untuk diunggah", type=["png", "jpg", "jpeg"])
