@@ -221,8 +221,9 @@ elif option == "Hasil Pemeriksaan":
         if st.button("🔍 Prediksi"):
             with st.spinner("Sedang memproses gambar..."):
                 try:
-                    path = r"st.session_state["image"]"
-                    predict_class(path)
+                    temp_path = "temp_image.jpg"
+                    image.save(temp_path)
+                    predict_class(temp_path)
                     
                     # Informasi tambahan berdasarkan hasil
                     if predicted_class == 1:
