@@ -223,7 +223,7 @@ elif option == "Hasil Pemeriksaan":
         if st.button("🔍 Prediksi"):
             with st.spinner("Sedang memproses gambar..."):
                 try:
-                    path = "st.session_state["image"]"
+                    path = "image"
                     predict_class(path)
                     
                 except Exception as e:
