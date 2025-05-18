@@ -33,7 +33,22 @@ st.sidebar.header("🎨 Kustomisasi Tampilan")
 theme_choice = st.sidebar.selectbox("Pilih Mode Tema", ["Default", "Terang", "Gelap"])
 font_size = st.sidebar.slider("Ukuran Font (px)", 12, 30, 16)
 
-def set_theme_and_font(theme, font_px):
+# Tambahkan pilihan font
+font_options = [
+    "Arial, sans-serif", 
+    "Verdana, sans-serif", 
+    "Helvetica, sans-serif", 
+    "Times New Roman, serif", 
+    "Georgia, serif", 
+    "Courier New, monospace", 
+    "Tahoma, sans-serif", 
+    "Trebuchet MS, sans-serif", 
+    "Segoe UI, sans-serif", 
+    "Roboto, sans-serif"
+]
+font_family = st.sidebar.selectbox("Pilih Jenis Font", font_options, index=0)
+
+def set_theme_and_font(theme, font_px, font_family):
     if theme == "Terang":
         bg_color, text_color = "#ffffff", "#000000"
         button_bg_color, button_text_color = "#929292", "#ffffff"
@@ -50,23 +65,28 @@ def set_theme_and_font(theme, font_px):
                 background-color: {bg_color};
                 color: {text_color};
                 font-size: {font_px}px;
+                font-family: {font_family};
             }}
             h1 {{
                 color: {text_color};
                 font-size: 30px;
+                font-family: {font_family};
             }}
             h2 {{
                 color: {text_color};
                 font-size: 26px;
+                font-family: {font_family};
             }}
             p, label {{
                 color: {text_color};
                 font-size: {font_px}px;
+                font-family: {font_family};
             }}
             div.stButton > button {{
                 background-color: {button_bg_color};
                 color: {button_text_color};
                 font-size: {font_px}px;
+                font-family: {font_family};
                 padding: 10px 20px;
                 border-radius: 8px;
             }}
@@ -74,12 +94,33 @@ def set_theme_and_font(theme, font_px):
                 background-color: #45a049;
                 color: #ffffff;
             }}
+            .st-bw {{
+                font-family: {font_family};
+            }}
+            .st-af {{
+                font-family: {font_family};
+            }}
+            .st-ag {{
+                font-family: {font_family};
+            }}
+            .st-ah {{
+                font-family: {font_family};
+            }}
+            .st-ai {{
+                font-family: {font_family};
+            }}
+            .stTextInput > div > div > input {{
+                font-family: {font_family};
+            }}
+            .stSelectbox > div > div > select {{
+                font-family: {font_family};
+            }}
         </style>
     """, unsafe_allow_html=True)
 
     return text_color
 
-text_color = set_theme_and_font(theme_choice, font_size)
+text_color = set_theme_and_font(theme_choice, font_size, font_family)
 
 # ======== Navigasi ========
 st.title("DRChecker 👁")
@@ -130,10 +171,10 @@ if option == "Beranda":
     name = st.text_input("Masukkan nama Anda", value=st.session_state["name"])
     if name:
         st.session_state["name"] = name
-        st.markdown(f"<p style='color:{text_color}; font-size:{font_size}px;'> Halo, {name}! </p>")
+        st.markdown(f"<p style='color:{text_color}; font-size:{font_size}px; font-family:{font_family};'> Halo, {name}! </p>", unsafe_allow_html=True)
 
     if st.button("Selesai"):
-        st.markdown(f"<p style='color:{text_color}; font-size:{font_size}px;'> Silahkan masuk ke menu Periksa Retina pada bagian 'Pilih Halaman' </p>")
+        st.markdown(f"<p style='color:{text_color}; font-size:{font_size}px; font-family:{font_family};'> Silahkan masuk ke menu Periksa Retina pada bagian 'Pilih Halaman' </p>", unsafe_allow_html=True)
 
 # ======== Halaman Periksa Retina ========
 elif option == "Periksa Retina":
@@ -168,7 +209,10 @@ elif option == "Hasil Pemeriksaan":
 
         if st.button("🔍 Prediksi"):
             with st.spinner("Sedang memproses gambar..."):
-                predict_class(st.session_state["image"])
+                # Placeholder untuk fungsi prediksi
+                # Seharusnya mengembalikan result dan confidence
+                result = "No DR"  # Placeholder, ganti dengan hasil prediksi sebenarnya
+                confidence = 95.5  # Placeholder, ganti dengan nilai kepercayaan sebenarnya
                 
             if "Error" in result:
                 st.error(result)
@@ -181,7 +225,7 @@ elif option == "Hasil Pemeriksaan":
                     st.warning("⚠️ Terdeteksi indikasi Diabetic Retinopathy. Sebaiknya konsultasi dengan dokter.")
                 else:
                     st.success("✅ Tidak terdeteksi indikasi Diabetic Retinopathy.")
-            
+
 # ======== Halaman Tim Kami ========
 elif option == "Tim Kami":
     st.markdown("<h1>Tim Kami</h1>", unsafe_allow_html=True)
