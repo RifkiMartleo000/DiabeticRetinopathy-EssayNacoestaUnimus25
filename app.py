@@ -205,6 +205,20 @@ if option == "Beranda":
     st.markdown(f"<h1 style='font-size:{h1_size}px;'>Beranda</h1>", unsafe_allow_html=True)
     custom_text("Selamat datang di situs Pemeriksaan Diabetic Retinopathy")
 
+    st.markdown("""
+    ## Apa itu Diabetic Retinopathy?
+    Diabetic Retinopathy (DR) adalah komplikasi diabetes yang memengaruhi mata. Kondisi ini terjadi ketika kadar gula darah tinggi merusak pembuluh darah di retina - jaringan peka cahaya di bagian belakang mata.
+    
+    ## Tentang Aplikasi Ini
+    DRChecker adalah aplikasi yang dirancang untuk membantu deteksi awal Diabetic Retinopathy melalui analisis gambar retina. Aplikasi ini menggunakan kecerdasan buatan untuk mengenali pola-pola pada gambar retina yang mungkin mengindikasikan adanya kondisi DR.
+    
+    ## Cara Penggunaan
+    1. Masukkan nama Anda di bawah ini
+    2. Pilih "Periksa Retina" di menu samping
+    3. Unggah gambar retina Anda
+    4. Lihat hasil analisis di halaman "Hasil Pemeriksaan"
+    """)
+    
     name = st.text_input("Masukkan nama Anda", value=st.session_state["name"])
     if name:
         st.session_state["name"] = name
@@ -218,6 +232,14 @@ elif option == "Periksa Retina":
     st.markdown(f"<h1 style='font-size:{h1_size}px;'>Periksa Retina</h1>", unsafe_allow_html=True)
     custom_text("Unggah Gambar Scan Retina Anda")
 
+    st.info("""
+    **Petunjuk:**
+    1. Unggah gambar retina yang jelas dan tidak buram
+    2. Format gambar yang didukung: PNG, JPG, JPEG
+    3. Gambar sebaiknya menampilkan area retina secara lengkap
+    4. Pastikan gambar dengan pencahayaan yang cukup
+    """)
+    
     uploaded_file = st.file_uploader("Pilih gambar untuk diunggah", type=["png", "jpg", "jpeg"])
     
     if uploaded_file:
