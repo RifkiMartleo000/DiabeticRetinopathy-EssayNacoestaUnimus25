@@ -221,7 +221,7 @@ elif option == "Hasil Pemeriksaan":
         if st.button("🔍 Prediksi"):
             with st.spinner("Sedang memproses gambar..."):
                 try:
-                    path = image
+                    path = st.session_state["image"]
                     
                     # Informasi tambahan berdasarkan hasil
                     if "DR" in result:
