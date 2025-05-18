@@ -24,36 +24,14 @@ st.set_page_config(
 )
 
 # Inisialisasi session state
-for key in ["image", "image_bytes", "filename", "name", "prediction_result", "confidence", "font_size"]:
+for key in ["image", "image_bytes", "filename", "name", "prediction_result", "confidence"]:
     if key not in st.session_state:
-        if key == "font_size":
-            st.session_state[key] = 16  # Default font size
-        else:
-            st.session_state[key] = None if key not in ["name", "prediction_result", "confidence"] else ""
+        st.session_state[key] = None if key not in ["name", "prediction_result", "confidence"] else ""
 
 # ======== Kustomisasi Tema ========
 st.sidebar.header("🎨 Kustomisasi Tampilan")
 theme_choice = st.sidebar.selectbox("Pilih Mode Tema", ["Default", "Terang", "Gelap"])
-
-# Font size adjustment with more detailed options
-st.sidebar.subheader("Pengaturan Font")
-font_size_option = st.sidebar.radio("Pilih Ukuran Font", ["Kecil", "Sedang", "Besar", "Kustom"])
-
-if font_size_option == "Kecil":
-    st.session_state.font_size = 14
-elif font_size_option == "Sedang":
-    st.session_state.font_size = 16
-elif font_size_option == "Besar":
-    st.session_state.font_size = 20
-elif font_size_option == "Kustom":
-    st.session_state.font_size = st.sidebar.slider("Ukuran Font Kustom (px)", 10, 30, st.session_state.font_size)
-
-font_size = st.session_state.font_size
-
-# Ukuran heading berdasarkan font dasar
-h1_size = font_size * 2
-h2_size = font_size * 1.6
-h3_size = font_size * 1.3
+font_size = st.sidebar.slider("Ukuran Font (px)", 12, 30, 16)
 
 def set_theme_and_font(theme, font_px):
     if theme == "Terang":
@@ -71,56 +49,30 @@ def set_theme_and_font(theme, font_px):
             body, .stApp {{
                 background-color: {bg_color};
                 color: {text_color};
+                font-size: {font_px}px;
             }}
-            .stMarkdown, .stText, p, li, div.row-widget.stRadio div {{
-                font-size: {font_px}px !important;
-            }}
-            h1, .stMarkdown h1 {{
+            h1 {{
                 color: {text_color};
-                font-size: {h1_size}px !important;
+                font-size: 30px;
             }}
-            h2, .stMarkdown h2 {{
+            h2 {{
                 color: {text_color};
-                font-size: {h2_size}px !important;
+                font-size: 26px;
             }}
-            h3, .stMarkdown h3 {{
+            p, label {{
                 color: {text_color};
-                font-size: {h3_size}px !important;
-            }}
-            .stTextInput input, .stTextArea textarea, .stNumberInput input {{
-                font-size: {font_px}px !important;
-            }}
-            .stSelectbox div div div, .stMultiselect div div div {{
-                font-size: {font_px}px !important;
+                font-size: {font_px}px;
             }}
             div.stButton > button {{
                 background-color: {button_bg_color};
                 color: {button_text_color};
-                font-size: {font_px}px !important;
+                font-size: {font_px}px;
                 padding: 10px 20px;
                 border-radius: 8px;
             }}
             div.stButton > button:hover {{
                 background-color: #45a049;
                 color: #ffffff;
-            }}
-            .stRadio label, .stCheckbox label, .stSlider label {{
-                font-size: {font_px}px !important;
-            }}
-            .stInfo, .stWarning, .stError, .stSuccess {{
-                font-size: {font_px}px !important;
-            }}
-            .stDataFrame, .stTable {{
-                font-size: {font_px-2}px !important;
-            }}
-            .stSidebar .stRadio label, .stSidebar .stCheckbox label {{
-                font-size: {font_px-2}px !important;
-            }}
-            .stPlotBaseGlideElement {{
-                font-size: {font_px}px !important;
-            }}
-            footer {{
-                font-size: {font_px-2}px !important;
             }}
         </style>
     """, unsafe_allow_html=True)
@@ -129,13 +81,9 @@ def set_theme_and_font(theme, font_px):
 
 text_color = set_theme_and_font(theme_choice, font_size)
 
-# ======== Fungsi untuk menampilkan teks dengan ukuran font yang dapat disesuaikan ========
-def custom_text(text, tag="p", style=""):
-    st.markdown(f"<{tag} style='font-size:{font_size}px; {style}'>{text}</{tag}>", unsafe_allow_html=True)
-
 # ======== Navigasi ========
 st.title("DRChecker 👁")
-custom_text("Website Pendeteksi Diabetic Retinopathy")
+st.markdown("Website Pendeteksi Diabetic Retinopathy")
 
 option = st.sidebar.selectbox(
     "Pilih Halaman",
@@ -169,28 +117,28 @@ def predict_class(path):
 
     # Tampilkan hasil prediksi
     if predicted_class == 1:
-        return "No DR", confidence * 100
+        print(f"No DR (Confidence: {confidence * 100:.2f}%)")
     else:
-        return "DR", confidence * 100
+        print(f"DR (Confidence: {confidence * 100:.2f}%)")
 
 
 # ======== Halaman Beranda ========
 if option == "Beranda":
-    st.markdown(f"<h1 style='font-size:{h1_size}px;'>Beranda</h1>", unsafe_allow_html=True)
-    custom_text("Selamat datang di situs Pemeriksaan Diabetic Retinopathy")
+    st.markdown("<h1> Beranda </h1>", unsafe_allow_html=True)
+    st.markdown("<p>Selamat datang di situs Pemeriksaan Diabetic Retinopathy</p>", unsafe_allow_html=True)
 
     name = st.text_input("Masukkan nama Anda", value=st.session_state["name"])
     if name:
         st.session_state["name"] = name
-        custom_text(f"Halo, {name}!")
+        st.markdown(f"<p style='color:{text_color}; font-size:{font_size}px;'> Halo, {name}! </p>")
 
     if st.button("Selesai"):
-        custom_text("Silahkan masuk ke menu Periksa Retina pada bagian 'Pilih Halaman'")
+        st.markdown(f"<p style='color:{text_color}; font-size:{font_size}px;'> Silahkan masuk ke menu Periksa Retina pada bagian 'Pilih Halaman' </p>")
 
 # ======== Halaman Periksa Retina ========
 elif option == "Periksa Retina":
-    st.markdown(f"<h1 style='font-size:{h1_size}px;'>Periksa Retina</h1>", unsafe_allow_html=True)
-    custom_text("Unggah Gambar Scan Retina Anda")
+    st.markdown("<h1> Periksa Retina </h1>", unsafe_allow_html=True)
+    st.markdown("<p>Unggah Gambar Scan Retina Anda</p>", unsafe_allow_html=True)
 
     uploaded_file = st.file_uploader("Pilih gambar untuk diunggah", type=["png", "jpg", "jpeg"])
     
@@ -211,7 +159,7 @@ elif option == "Periksa Retina":
 
 # ======== Halaman Hasil Pemeriksaan ========
 elif option == "Hasil Pemeriksaan":
-    st.markdown(f"<h1 style='font-size:{h1_size}px;'>Hasil Pemeriksaan</h1>", unsafe_allow_html=True)
+    st.markdown("<h1>Hasil Pemeriksaan</h1>", unsafe_allow_html=True)
 
     if st.session_state["image"] is None:
         st.warning("Silakan unggah gambar terlebih dahulu di halaman 'Periksa Retina'.")
@@ -220,51 +168,35 @@ elif option == "Hasil Pemeriksaan":
 
         if st.button("🔍 Prediksi"):
             with st.spinner("Sedang memproses gambar..."):
-                try:
-                    # Simpan gambar sementara
-                    temp_path = "temp_image.jpg"
-                    st.session_state["image"].save(temp_path)
-                    
-                    # Lakukan prediksi
-                    result, confidence = predict_class(temp_path)
-                    
-                    # Hapus file sementara
-                    if os.path.exists(temp_path):
-                        os.remove(temp_path)
-                    
-                    st.success(f"Hasil Prediksi: {result}")
-                    st.info(f"Tingkat Kepercayaan: {confidence:.2f}%")
-                    
-                    # Informasi tambahan berdasarkan hasil
-                    if "DR" in result:
-                        st.warning("⚠️ Terdeteksi indikasi Diabetic Retinopathy. Sebaiknya konsultasi dengan dokter.")
-                    else:
-                        st.success("✅ Tidak terdeteksi indikasi Diabetic Retinopathy.")
-                except Exception as e:
-                    st.error(f"Error: {str(e)}")
+                predict_class(st.session_state["image"])
+                
+            if "Error" in result:
+                st.error(result)
+            else:
+                st.success(f"Hasil Prediksi: {result}")
+                st.info(f"Tingkat Kepercayaan: {confidence:.2f}%")
+                
+                # Informasi tambahan berdasarkan hasil
+                if "DR" in result:
+                    st.warning("⚠️ Terdeteksi indikasi Diabetic Retinopathy. Sebaiknya konsultasi dengan dokter.")
+                else:
+                    st.success("✅ Tidak terdeteksi indikasi Diabetic Retinopathy.")
             
 # ======== Halaman Tim Kami ========
 elif option == "Tim Kami":
-    st.markdown(f"<h1 style='font-size:{h1_size}px;'>Tim Kami</h1>", unsafe_allow_html=True)
-    st.markdown(f"<h2 style='font-size:{h2_size}px;'>El STM</h2>", unsafe_allow_html=True)
-    
-    # Menggunakan ukuran font dari pengaturan
-    team_html = f"""
-    <ul style='font-size:{font_size}px;'>
-        <li>Anggota 1</li>
-        <li>Anggota 2</li>
-        <li>Anggota 3</li>
-    </ul>
-    """
-    st.markdown(team_html, unsafe_allow_html=True)
+    st.markdown("<h1>Tim Kami</h1>", unsafe_allow_html=True)
+    st.markdown("<h2>El STM</h2>", unsafe_allow_html=True)
+    st.markdown("""
+        <ul>
+            <li>Anggota 1</li>
+            <li>Anggota 2</li>
+            <li>Anggota 3</li>
+        </ul>
+    """)
+
+# Tambahkan informasi footer
+st.markdown("---")
 
 # ======== Footer ========
-st.markdown("---")
 st.markdown(f"<hr style='border-top: 1px solid {text_color};'>", unsafe_allow_html=True)
-st.markdown(f"<p style='color:{text_color}; font-size:{font_size-2}px;'>drchecker.web@2025</p>", unsafe_allow_html=True)
-
-# Display current font settings
-with st.sidebar.expander("Info Pengaturan Font Saat Ini"):
-    st.write(f"Ukuran Font: {font_size}px")
-    st.write(f"Ukuran Heading 1: {h1_size}px")
-    st.write(f"Ukuran Heading 2: {h2_size}px")
+st.markdown(f"<p style='color:{text_color};'>drchecker.web@2025</p>", unsafe_allow_html=True)
