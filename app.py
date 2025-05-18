@@ -35,8 +35,8 @@ def set_theme_and_font(theme, font_px):
         bg_color, text_color = "#000000", "#ffffff"
         button_bg_color, button_text_color = "#424242", "#000000"
     else:
-        bg_color, text_color = "#daffb8", "#000000"
-        button_bg_color, button_text_color = "#3d8000", "#ffffff"
+        bg_color, text_color = "#18421b", "#ffffff"
+        button_bg_color, button_text_color = "#017b0a", "#ffffff"
 
     st.markdown(f"""
         <style>
@@ -45,7 +45,15 @@ def set_theme_and_font(theme, font_px):
                 color: {text_color};
                 font-size: {font_px}px;
             }}
-            h1, h2, h3, h4, h5, h6, p, label {{
+            h1 {{
+                color: {text_color};
+                font-size: 30px;
+            }}
+            h2 {{
+                color: {text_color};
+                font-size: 26px;
+            }}
+            p, label {{
                 color: {text_color};
                 font-size: {font_px}px;
             }}
@@ -110,20 +118,20 @@ def predict_class(path):
 
 # ======== Halaman Beranda ========
 if option == "Beranda":
-    st.markdown("<h1>Beranda</h1>", unsafe_allow_html=True)
-    st.markdown("<p>Selamat datang di situs Pemeriksaan Diabetic Retinopathy</p>", unsafe_allow_html=True)
+    st.markdown("<h1> Beranda </h1>")
+    st.markdown("<p> Selamat datang di situs Pemeriksaan Diabetic Retinopathy </p>")
 
     name = st.text_input("Masukkan nama Anda", value=st.session_state["name"])
     if name:
         st.session_state["name"] = name
-        st.markdown(f"<p style='color:{text_color}; font-size:{font_size}px;'>Halo, {name}!</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color:{text_color}; font-size:{font_size}px;'>Halo, {name}!</p>")
 
     if st.button("Selesai"):
-        st.markdown(f"<p style='color:{text_color}; font-size:{font_size}px;'>Silahkan masuk ke menu Periksa Retina pada bagian 'Pilih Halaman'</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color:{text_color}; font-size:{font_size}px;'> Silahkan masuk ke menu Periksa Retina pada bagian 'Pilih Halaman'</p>", unsafe_allow_html=True)
 
 # ======== Halaman Periksa Retina ========
 elif option == "Periksa Retina":
-    st.markdown("<h1>Periksa Retina</h1>", unsafe_allow_html=True)
+    st.markdown("<h1> Periksa Retina </h1>")
     st.markdown("<p>Unggah Gambar Scan Retina Anda</p>", unsafe_allow_html=True)
 
     uploaded_file = st.file_uploader("Pilih gambar untuk diunggah", type=["png", "jpg", "jpeg"])
