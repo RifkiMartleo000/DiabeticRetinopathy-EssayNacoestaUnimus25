@@ -16,6 +16,7 @@ import io
 import os
 
 
+
 # ======== Konfigurasi Halaman ========
 st.set_page_config(
     page_title="DRChecker",
@@ -124,8 +125,8 @@ def predict_class(path):
 
 # ======== Halaman Beranda ========
 if option == "Beranda":
-    st.markdown("<h1> Beranda </h1>")
-    st.markdown("<p> Selamat datang di situs Pemeriksaan Diabetic Retinopathy </p>")
+    st.markdown("<h1>Beranda</h1>")
+    st.markdown("<p>Selamat datang di situs Pemeriksaan Diabetic Retinopathy</p>")
 
     name = st.text_input("Masukkan nama Anda", value=st.session_state["name"])
     if name:
@@ -192,7 +193,7 @@ elif option == "Tim Kami":
             <li>Anggota 2</li>
             <li>Anggota 3</li>
         </ul>
-    """, unsafe_allow_html=True)
+    """)
 
 # Tambahkan informasi footer
 st.markdown("---")
