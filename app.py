@@ -221,19 +221,7 @@ elif option == "Hasil Pemeriksaan":
         if st.button("🔍 Prediksi"):
             with st.spinner("Sedang memproses gambar..."):
                 try:
-                    # Simpan gambar sementara
-                    temp_path = "temp_image.jpg"
-                    st.session_state["image"].save(temp_path)
-                    
-                    # Lakukan prediksi
-                    result, confidence = predict_class(temp_path)
-                    
-                    # Hapus file sementara
-                    if os.path.exists(temp_path):
-                        os.remove(temp_path)
-                    
-                    st.success(f"Hasil Prediksi: {result}")
-                    st.info(f"Tingkat Kepercayaan: {confidence:.2f}%")
+                    path = image
                     
                     # Informasi tambahan berdasarkan hasil
                     if "DR" in result:
