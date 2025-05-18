@@ -225,8 +225,11 @@ elif option == "Hasil Pemeriksaan":
                 try:
                     with open("temp_image.jpg", "wb") as f:
                         f.write(st.session_state["image_bytes"])
-                        
-                    predict_class("temp_image.jpg")
+                    
+                    result, conf = predict_class("temp_image.jpg")
+
+                    st.session_state["prediction_result"] = result
+                    st.session_state["confidence"] = f"{conf:.2f}%"  
                     
                 except Exception as e:
                     st.error(f"Error: {str(e)}")
