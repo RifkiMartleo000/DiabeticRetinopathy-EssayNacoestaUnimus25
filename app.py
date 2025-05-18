@@ -222,7 +222,6 @@ elif option == "Hasil Pemeriksaan":
             with st.spinner("Sedang memproses gambar..."):
                 try:
                     path = "temp_image.jpg"
-                    image.save(path)
                     predict_class(path)
                     
                     # Informasi tambahan berdasarkan hasil
