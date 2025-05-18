@@ -1,10 +1,6 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import tensorflow as tf
-from tensorflow.keras.models import model_from_json
-import matplotlib.pyplot as plt
-import cv2
 from PIL import Image
 import io
 import os
