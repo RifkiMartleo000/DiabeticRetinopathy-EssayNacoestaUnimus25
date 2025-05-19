@@ -312,9 +312,9 @@ elif option == "Tim Kami":
     # Menggunakan ukuran font dari pengaturan
     team_html = f"""
     <ul style='font-size:{font_size}px;'>
-        <li>Anggota 1</li>
-        <li>Anggota 2</li>
-        <li>Anggota 3</li>
+        <li>Fayzul Haq Mahardika Basunjaya</li>
+        <li>Kevin Surya Prayoga Wibowo</li>
+        <li>Rifki Martleo Alfiansyah</li>
     </ul>
     """
     st.markdown(team_html, unsafe_allow_html=True)
