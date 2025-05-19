@@ -307,7 +307,7 @@ elif option == "Hasil Pemeriksaan":
 # ======== Halaman Tim Kami ========
 elif option == "Tim Kami":
     st.markdown(f"<h1 style='font-size:{h1_size}px;'>Tim Kami</h1>", unsafe_allow_html=True)
-    st.markdown(f"<h2 style='font-size:{h2_size}px;'>El STM</h2>", unsafe_allow_html=True)
+    st.markdown(f"<h2 style='font-size:{h2_size}px;'>El Skicit-Learn</h2>", unsafe_allow_html=True)
     
     # Menggunakan ukuran font dari pengaturan
     team_html = f"""
